@@ -33,6 +33,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
 import java.io.File;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -108,8 +109,6 @@ public class CameraPreviewActivity extends AppCompatActivity implements CameraBr
 
         if(curFace != null){
             Rect rect = new Rect(curFace.x, curFace.y, curFace.width, curFace.height);
-            Point a = new Point(rect.x + rect.width, rect.y);
-            Point b = new Point(rect.x, rect.y + rect.height);
             Core.rotate(originMat, originMat, Core.ROTATE_90_CLOCKWISE);
             Imgproc.rectangle(originMat, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
             Imgproc.putText(originMat, curFace.expression, rect.tl(), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2);
@@ -173,6 +172,9 @@ public class CameraPreviewActivity extends AppCompatActivity implements CameraBr
         protected void onPostExecute(String response) {
             if (response != null) {
                 curFace = parseJsonResponse(response);
+                if(curFace != null && Objects.equals(curFace.expression, "7")){ // No face detected
+                    curFace = null;
+                }
             } else {
                 Log.w(TAG, "OnPostExecute: null response");
             }
