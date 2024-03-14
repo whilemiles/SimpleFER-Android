@@ -111,11 +111,11 @@ public class CameraPreviewActivity extends AppCompatActivity implements CameraBr
             Rect rect = new Rect(curFace.x, curFace.y, curFace.width, curFace.height);
             Core.rotate(originMat, originMat, Core.ROTATE_90_CLOCKWISE);
             Imgproc.rectangle(originMat, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
-            Imgproc.putText(originMat, curFace.expression, rect.tl(), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2);
+            Imgproc.putText(originMat, ExpressionToString(curFace.expression), rect.tl(), Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 0, 0), 2);
             Core.rotate(originMat, originMat, Core.ROTATE_90_COUNTERCLOCKWISE);
         }
 
-        if(frameCount % 5 == 0)
+        if(frameCount % 10 == 0)
         {
             frameCount = 0;
             File imageDirectory = new File(getExternalFilesDir(null), "camera_images");
@@ -130,6 +130,28 @@ public class CameraPreviewActivity extends AppCompatActivity implements CameraBr
         return originMat;
     }
 
+    private String ExpressionToString(String ex)
+    {
+        switch (ex)
+        {
+            case "0":
+                return "angry";
+            case "1":
+                return "disgust";
+            case "2":
+                return "fear";
+            case "3":
+                return "happy";
+            case "4":
+                return "neutral";
+            case "5":
+                return "sad";
+            case "6":
+                return "surprise";
+            default:
+                return null;
+        }
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
