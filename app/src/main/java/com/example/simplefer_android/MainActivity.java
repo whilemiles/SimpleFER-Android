@@ -1,12 +1,15 @@
 package com.example.simplefer_android;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -52,8 +55,14 @@ public class MainActivity extends AppCompatActivity
         binding.cameraButton.setOnClickListener(
             view -> {
                 try {
-                    Intent intent = new Intent(this, CameraPreviewActivity.class);
-                    startActivity(intent);
+                    if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{android.Manifest.permission.CAMERA}, 1);
+                    } else {
+                        Intent intent = new Intent(this, CameraPreviewActivity.class);
+                        startActivity(intent);
+                    }
                 }
                 catch (Error e){
                     e.printStackTrace();

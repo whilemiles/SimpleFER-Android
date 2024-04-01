@@ -25,6 +25,7 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -85,7 +86,7 @@ public class CameraPreviewActivity extends AppCompatActivity implements CameraBr
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(cameraView!=null){
+        if(cameraView != null){
             cameraView.disableView();
         }
     }
@@ -118,12 +119,11 @@ public class CameraPreviewActivity extends AppCompatActivity implements CameraBr
         if(frameCount % 10 == 0)
         {
             frameCount = 0;
-            File imageDirectory = new File(getExternalFilesDir(null), "camera_images");
-            String fileName = "test" + ".jpg";
-            File imageFile = new File(imageDirectory, fileName);
-            Imgcodecs.imwrite(imageFile.getAbsolutePath(), grayMat);
             ImageUploadTask uploadTask = new ImageUploadTask();
-            uploadTask.execute(imageFile);
+            MatOfByte matOfByte = new MatOfByte();
+            Imgcodecs.imencode(".jpeg", grayMat, matOfByte);
+            byte[] byteArray = matOfByte.toArray();
+            uploadTask.execute(byteArray);
         }
 
         frameCount++;
@@ -167,18 +167,18 @@ public class CameraPreviewActivity extends AppCompatActivity implements CameraBr
             }
         }
     }
-    public class ImageUploadTask extends AsyncTask<File, Void, String> {
+    public class ImageUploadTask extends AsyncTask<byte[], Void, String> {
         private static final String SERVER_URL = "http://172.21.117.218:5050/upload";
 
         @Override
-        protected String doInBackground(File... files) {
-            if (files.length == 0 || files[0] == null) {
+        protected String doInBackground(byte[]... byteArrays) {
+            if (byteArrays.length == 0 || byteArrays[0] == null) {
                 return "No file to upload";
             }
-            File imageFile = files[0];
+            byte[] byteArray = byteArrays[0];
             try {
                 OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), imageFile);
+                RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), byteArray);
                 Request request = new Request.Builder()
                         .url(SERVER_URL)
                         .post(requestBody)
