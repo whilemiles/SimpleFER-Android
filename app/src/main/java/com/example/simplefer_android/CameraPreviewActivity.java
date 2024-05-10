@@ -47,11 +47,12 @@ import com.google.gson.Gson;
 public class CameraPreviewActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2
 {
     private static final String TAG = "CameraPreviewActivity";
-
     private Face curFace;
     private JavaCameraView cameraView;
 
     private int frameCount = 0;
+
+    private int connect_flag = 1;
     BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -193,6 +194,11 @@ public class CameraPreviewActivity extends AppCompatActivity implements CameraBr
         @Override
         protected void onPostExecute(String response) {
             if (response != null) {
+                if(connect_flag == 1){
+                    Toast toast = Toast.makeText(CameraPreviewActivity.this, "连接到http://172.21.117.218:5050", Toast.LENGTH_SHORT);
+                    toast.show();
+                    connect_flag = 0;
+                }
                 curFace = parseJsonResponse(response);
                 if(curFace != null && Objects.equals(curFace.expression, "7")){ // No face detected
                     curFace = null;
