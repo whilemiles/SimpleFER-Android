@@ -2,6 +2,7 @@ package com.example.simplefer_android;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,6 +58,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void validateCredentials(String username, String password) {
+        if(username.isEmpty() || password.isEmpty()){
+            runOnUiThread(() -> showErrorMessage("用户名或密码为空"));
+            return;
+        }
         JSONObject json = new JSONObject();
         try {
             json.put("Name", username);
@@ -76,6 +81,8 @@ public class LoginActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Log.e("validate", e.getMessage());
                 runOnUiThread(() -> showErrorMessage("处理请求失败"));
             }
 
@@ -84,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     runOnUiThread(() -> showSuccessMessage("登陆成功"));
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("userName", username);
                     startActivity(intent);
                     finish();
                 } else {

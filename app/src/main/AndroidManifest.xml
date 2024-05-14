@@ -40,5 +40,9 @@
             android:name=".RegisterActivity"
             android:label="Register Activity">
         </activity>
+        <activity
+            android:name=".ShowResultsActivity"
+            android:label="Show Results Activity">
+        </activity>
     </application>
 </manifest>

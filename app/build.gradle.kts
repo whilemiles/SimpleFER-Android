@@ -40,7 +40,9 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment:2.7.6")
     implementation("androidx.navigation:navigation-ui:2.7.6")
     implementation("com.google.firebase:firebase-inappmessaging:20.4.0")
+    implementation ("com.squareup.picasso:picasso:2.8")
     implementation(project(":opencv"))
+    implementation("org.chromium.net:cronet-embedded:119.6045.31")
     testImplementation("junit:junit:4.13.2")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

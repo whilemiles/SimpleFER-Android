@@ -61,10 +61,14 @@ public class MainActivity extends AppCompatActivity
     private com.example.simplefer_android.databinding.ActivityMainBinding binding;
     private AppBarConfiguration appBarConfiguration;
     private boolean isPieMenuOpen = false;
+
+    private String userName = "";
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        userName = getIntent().getStringExtra("userName");
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -128,6 +132,20 @@ public class MainActivity extends AppCompatActivity
             }
         );
 
+        binding.downloadButton.setOnClickListener(
+                view -> {
+                    try {
+                        Intent intent = new Intent(this, ShowResultsActivity.class);
+                        intent.putExtra("userName", userName);
+                        startActivity(intent);
+                    }
+                    catch (Error e){
+                        Log.e("playButton", "play"+ e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+        );
+
     }
 
     @Override
@@ -166,7 +184,7 @@ public class MainActivity extends AppCompatActivity
     public class VideoUploadTask extends AsyncTask<File, Void, String>
     {
         private final String TAG = "VideoUploadTask";
-        private static final String SERVER_URL = "http://172.21.117.218:5050/upload";
+        private String SERVER_URL = "http://172.21.117.218:5050/upload?user_name=" + userName;
 
         @Override
         protected String doInBackground(File... files) {
@@ -179,6 +197,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = RequestBody.create(MediaType.parse("video/mp4"), file);
+
                 Request request = new Request.Builder()
                         .url(SERVER_URL)
                         .post(requestBody)
