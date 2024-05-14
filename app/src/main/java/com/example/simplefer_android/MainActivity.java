@@ -51,7 +51,6 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
 {
-    private Context mContext;
     private static final String TAG = "MainActivity";
     private static final int REQUEST_CAMERA_PERMISSION = 0;
 
