@@ -40,6 +40,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import okhttp3.MediaType;
@@ -48,6 +51,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -204,6 +208,18 @@ public class MainActivity extends AppCompatActivity
                         .build();
                 Response response = client.newCall(request).execute();
                 if(response.isSuccessful()){
+                    ResponseBody responseBody = response.body();
+                    if(responseBody != null){
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+                        String fileName = "video_" + sdf.format(new Date()) + ".mp4";
+                        File newVideoFile = new File("/storage/emulated/0/Movies/", fileName);
+                        FileOutputStream fos = new FileOutputStream(newVideoFile);
+                        fos.write(responseBody.bytes());
+                        fos.close();
+                    }
+                    else{
+                        return "Fail";
+                    }
                     return "Success";
                 }
                 else{
@@ -219,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(String response) {
             if (Objects.equals(response, "Success")) {
                 Log.i(TAG , "upload succeeded");
-                Toast.makeText(MainActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "上传成功, 分析完成", Toast.LENGTH_SHORT).show();
             } else {
                 Log.e(TAG , "upload failed");
                 Toast.makeText(MainActivity.this, "上传失败", Toast.LENGTH_SHORT).show();
@@ -227,7 +243,6 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
-
     private void openPieMenu()
     {
     // 展开动画
